@@ -86,3 +86,9 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Parcel v2 cache (https://parceljs.org/)
+.parcel-cache/
+
+# Compiled output directory
+dist/
