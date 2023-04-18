@@ -19,6 +19,11 @@ runs:
     - name: Compile MD to TeX
       run: npm run start --prefix ${{github.action_path}} -- -i ${{github.workspace}}/${{inputs.input-path}} -o  ${{github.workspace}}/${{inputs.output-path}}
       shell: bash
+    - name: Upload Latex file
+      uses: actions/upload-artifact@v3
+      with:
+        name: LaTeX
+        path: ${{inputs.output-path}}
     - name: Compile TeX to PDF
       uses: xu-cheng/latex-action@v2
       with:
@@ -27,8 +32,8 @@ runs:
     - name: Upload PDF file
       uses: actions/upload-artifact@v3
       with:
-        name: LaTeX & PDF
-        path: ${{inputs.output-path}}
+        name: PDF
+        path: ${{inputs.output-path}}/main.pdf
 branding:
   icon: "edit"
   color: "gray-dark"

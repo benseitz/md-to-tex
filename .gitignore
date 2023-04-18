@@ -92,3 +92,5 @@ typings/
 
 # Compiled output directory
 dist/
+
+.DS_Store
