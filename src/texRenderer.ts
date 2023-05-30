@@ -319,7 +319,7 @@ export const extensions = [
       }
     },
     renderer(token) {
-      return token.latexExpression;
+      return "$" + token.latexExpression + "$";
     },
   },
   {
