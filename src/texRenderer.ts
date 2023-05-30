@@ -33,6 +33,9 @@ type Slugger = {
 
 export const renderer: Renderer = {
   code(code, lang, escaped) {
+    if (lang === "mdtotex") {
+      return code + EOL + EOL;
+    }
     return (
       "\\begin{mdframed}[backgroundcolor=bg]" +
       EOL +
