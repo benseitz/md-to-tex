@@ -203,6 +203,10 @@ export const renderer: Renderer = {
     return "\\emph{" + text + "}";
   },
   codespan(code) {
+    if (code.startsWith("mdtotex")) {
+      const rawCode = code.replace("mdtotex", "").trim();
+      return rawCode;
+    }
     return "\\texttt{" + code + "}";
   },
   br() {
