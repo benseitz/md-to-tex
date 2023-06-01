@@ -336,15 +336,40 @@ export const extensions = [
       const rule = /^\^\[([^\^\[\n]+)\]/;
       const match = rule.exec(src);
       if (match) {
+        const cite = match[1].split(",");
+        const author: string = cite[0].trim();
+        const args: string | undefined = cite[1]?.trim();
+        const hasParenthesis: boolean =
+          typeof args === "string" &&
+          args.length >= 2 &&
+          args[0] === "(" &&
+          args[args.length - 1] === ")";
+        const page: string | undefined =
+          typeof args === "string"
+            ? hasParenthesis
+              ? args.length > 2
+                ? args.substring(1, args.length - 1)
+                : undefined
+              : args
+            : undefined;
+
         return {
           type: "cite",
           raw: match[0],
-          cite: match[1],
+          author,
+          hasParenthesis,
+          page,
         };
       }
     },
-    renderer(token) {
-      return "\\cite{" + token.cite + "}";
+    renderer({ author, hasParenthesis, page }) {
+      const openParenthesis = hasParenthesis ? "(" : "";
+      const closeParenthesis = hasParenthesis ? ")" : "";
+
+      if (page) {
+        return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}, ${page}${closeParenthesis}}`;
+      }
+      return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}${closeParenthesis}}`;
     },
   },
 ];
