@@ -368,9 +368,9 @@ export const extensions = [
       const closeParenthesis = hasParenthesis ? ")" : "";
 
       if (page) {
-        return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}, ${page}${closeParenthesis}}`;
+        return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}, ${page}${closeParenthesis}`;
       }
-      return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}${closeParenthesis}}`;
+      return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}${closeParenthesis}`;
     },
   },
 ];
