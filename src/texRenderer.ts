@@ -203,11 +203,12 @@ export const renderer: Renderer = {
     return "\\emph{" + text + "}";
   },
   codespan(code) {
-    if (code.startsWith("mdtotex")) {
-      const rawCode = code.replace("mdtotex", "").trim();
+    const unescapedCode = unescape(code);
+    if (unescapedCode.startsWith("mdtotex")) {
+      const rawCode = unescapedCode.replace("mdtotex", "").trim();
       return rawCode;
     }
-    return "\\texttt{" + code + "}";
+    return "\\texttt{" + unescapedCode + "}";
   },
   br() {
     return "\\\\";
@@ -303,6 +304,23 @@ function texEscape(text) {
     .replace(/\}/g, "\\} ")
     .replace(/~/g, "\\textasciitilde ")
     .replace(/\^/g, "\\textasciicircum ");
+}
+
+function unescape(text: string): string {
+  const escapeReplacements = [
+    ["&amp;", "&"],
+    ["&lt;", "<"],
+    ["&gt;", ">"],
+    ["&quot;", '"'],
+    ["&#39;", "'"],
+  ];
+
+  let result = text;
+  for (const [key, value] of escapeReplacements) {
+    const regex = new RegExp(key, "g");
+    result = result.replace(regex, value);
+  }
+  return result;
 }
 
 export const extensions = [
