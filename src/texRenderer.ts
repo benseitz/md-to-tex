@@ -55,7 +55,8 @@ export const renderer: Renderer = {
     return "\\begin{quote}" + EOL + quote + EOL + "\\end{quote}" + EOL;
   },
   html(html) {
-    throw new Error("HTML not supported in LaTeX.");
+    console.warn(`HTML not supported in LaTeX. ["${html}"]`);
+    return html;
   },
   heading(text, level, raw) {
     let command = "";
@@ -101,9 +102,8 @@ export const renderer: Renderer = {
     return "\\item " + text + EOL;
   },
   checkbox(checked) {
-    throw new Error(
-      "Checkbox not supported in LaTeX. Please use a list instead."
-    );
+    console.warn("Checkbox not supported in LaTeX. Please use a list instead.");
+    return "";
   },
   paragraph(text) {
     return text + EOL + EOL;
@@ -213,7 +213,8 @@ export const renderer: Renderer = {
     return "\\\\";
   },
   del(text) {
-    throw new Error("Strikethrough not supported in LaTeX.");
+    console.warn(`Strikethrough not supported in LaTeX. ["${text}"]`);
+    return text;
   },
   link(href, title, text) {
     // requires \usepackage{hyperref}
