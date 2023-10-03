@@ -1,6 +1,10 @@
 name: "md-to-tex"
 description: "Convert multiple markdown files into a single TeX file"
 inputs:
+  name:
+    description: "The name of the file to be generated"
+    required: false
+    default: "Document"
   input-path:
     description: "Path to markdown file or directory with markdown files"
     required: true
@@ -17,12 +21,12 @@ runs:
     - run: npm run build --prefix ${{github.action_path}}
       shell: bash
     - name: Compile MD to TeX
-      run: npm run start --prefix ${{github.action_path}} -- -i ${{github.workspace}}/${{inputs.input-path}} -o  ${{github.workspace}}/${{inputs.output-path}}
+      run: npm run start --prefix ${{github.action_path}} -- -i ${{github.workspace}}/${{inputs.input-path}} -o ${{github.workspace}}/${{inputs.output-path}}
       shell: bash
     - name: Upload Latex file
       uses: actions/upload-artifact@v3
       with:
-        name: LaTeX
+        name: ${{inputs.name}} LaTeX
         path: ${{inputs.output-path}}
     - name: Compile TeX to PDF
       uses: xu-cheng/latex-action@v2
@@ -33,7 +37,7 @@ runs:
     - name: Upload PDF file
       uses: actions/upload-artifact@v3
       with:
-        name: PDF
+        name: ${{inputs.name}} PDF
         path: ${{inputs.output-path}}/main.pdf
 branding:
   icon: "edit"
