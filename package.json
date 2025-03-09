@@ -1,6 +1,6 @@
 {
   "name": "md-to-tex",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Convert Md to Tex",
   "bin": "dist/cli.js",
   "type": "module",
