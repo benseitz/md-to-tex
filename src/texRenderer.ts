@@ -127,28 +127,7 @@ export const renderer: Renderer = {
     return "\\href{" + href + "}{" + text + "}";
   },
   image(href, title, text) {
-    // requires \usepackage{graphicx}
-    return (
-      EOL +
-      "\\begin{figure}[h]" +
-      EOL +
-      "   \\centering" +
-      EOL +
-      "   \\includegraphics{" +
-      href +
-      "}" +
-      EOL +
-      "   \\caption{" +
-      text +
-      "}" +
-      EOL +
-      "   \\label{figure:" +
-      href +
-      "}" +
-      EOL +
-      "\\end{figure}" +
-      EOL
-    );
+    return `\\input{${text}}` + EOL;
   },
   text(text) {
     return texEscape(htmlUnescape(text));
@@ -238,46 +217,67 @@ export const extensions = [
     name: "cite",
     level: "inline",
     start(src) {
-      return src.match(/\^\[/)?.index;
+      return src.match(/@|\[@/)?.index;
     },
     tokenizer(src, tokens) {
-      const rule = /^\^\[([^\^\[\n]+)\]/;
-      const match = rule.exec(src);
-      if (match) {
-        const cite = match[1].split(",");
-        const author: string = cite[0].trim();
-        const args: string | undefined = cite[1]?.trim();
-        const hasParenthesis: boolean =
-          typeof args === "string" &&
-          args.length >= 2 &&
-          args[0] === "(" &&
-          args[args.length - 1] === ")";
-        const page: string | undefined =
-          typeof args === "string"
-            ? hasParenthesis
-              ? args.length > 2
-                ? args.substring(1, args.length - 1)
-                : undefined
-              : args
-            : undefined;
+      const directRule = /^@([a-zA-Z][a-zA-Z0-9]*)(?:\s\[(.*?)\])?/;
+      const indirectRule =
+        /^\[@[a-zA-Z][a-zA-Z0-9]*(,\s(.*?))?(;\s@[a-zA-Z][a-zA-Z0-9]*(,\s(.*?))?)*\]/;
+
+      const directMatch = directRule.exec(src);
+      if (directMatch) {
+        const authors = [];
+        const pages = [];
+
+        authors.push(directMatch[1].trim());
+        if (directMatch[2]) {
+          pages.push(directMatch[2].trim().replace(/\s/g, "~"));
+        }
 
         return {
           type: "cite",
-          raw: match[0],
-          author,
-          hasParenthesis,
-          page,
+          raw: directMatch[0],
+          authors,
+          pages,
+          isIndirect: false,
+        };
+      }
+
+      const indirectMatch = indirectRule.exec(src);
+      if (indirectMatch) {
+        const authors = [];
+        const pages = [];
+
+        const parts = indirectMatch[0].slice(1, -1).split(";");
+        parts.forEach((part) => {
+          const [author, page] = part.split(",").map((s) => s.trim());
+          authors.push(author.startsWith("@") ? author.slice(1) : author);
+          if (page) {
+            pages.push(page.replace(/\s/g, "~"));
+          }
+        });
+
+        return {
+          type: "cite",
+          raw: indirectMatch[0],
+          authors,
+          pages,
+          isIndirect: true,
         };
       }
     },
-    renderer({ author, hasParenthesis, page }) {
-      const openParenthesis = hasParenthesis ? "(" : "";
-      const closeParenthesis = hasParenthesis ? ")" : "";
-
-      if (page) {
-        return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}, ${page}${closeParenthesis}`;
+    renderer({ authors, pages, isIndirect }) {
+      if (isIndirect) {
+        const citations = [];
+        authors.forEach((author, index) => {
+          citations.push(
+            `||citeauthor{${author} \\citeyear[${pages[index]}]{${author}}`
+          );
+        });
+        return `(${citations.join("; ")})`;
+      } else {
+        return `\\citeauthor{${authors[0]} (\\citeyear[${pages[0]}]{${authors[0]}}`;
       }
-      return `\\citeauthor{${author}} ${openParenthesis}\\citeyear{${author}}${closeParenthesis}`;
     },
   },
 ];
