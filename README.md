@@ -6,7 +6,7 @@ The markdown files in `./<input-path>/` is compiled to `./<output-path>/content.
 
 `./<output-path>/content.tex` will be treated as the root file of the LaTeX project for the PDF compiler.
 
-The comnplete content of `<output-path>`, including the `.tex` and `.pdf` files, are uploaded to the _GitHub Action Artefacts_.
+The complete content of `<output-path>`, including the `.tex` and `.pdf` files, are uploaded to the _GitHub Action Artefacts_.
 
 It uses [markedjs/marked
 ](https://github.com/markedjs/marked) and [xu-cheng/latex-action](https://github.com/xu-cheng/latex-action). See their documentation for more details.
@@ -28,7 +28,7 @@ Each input is provided as a key inside the `with` section of the action.
 
 - `output-path` (required)
 
-  The path to a directory, containing an existing `main.tex`. For example:
+  The path to a directory. **Must** contain an existing `main.tex`. For example:
 
   ```yaml
   - uses: benseitz/md-to-tex@v1
