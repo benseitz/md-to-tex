@@ -36,27 +36,13 @@ export const renderer: Renderer = {
     if (lang === "mdtotex") {
       return code + EOL + EOL;
     }
-    return (
-      "\\begin{mdframed}[backgroundcolor=bg]" +
-      EOL +
-      "   \\begin{minted}[xleftmargin=20pt,linenos,breaklines,breakbefore=/?=]{" +
-      lang +
-      "}" +
-      EOL +
-      code +
-      EOL +
-      "   \\end{minted}" +
-      EOL +
-      "\\end{mdframed} " +
-      EOL
-    );
+    throw new Error("Code blocks are not supported.");
   },
   blockquote(quote) {
-    return "\\begin{quote}" + EOL + quote + EOL + "\\end{quote}" + EOL;
+    throw new Error("Blockquotes are not supported.");
   },
   html(html) {
-    console.warn(`HTML not supported in LaTeX. ["${html}"]`);
-    return html;
+    throw new Error("HTML is not supported.");
   },
   heading(text, level, raw) {
     let command = "";
@@ -102,99 +88,19 @@ export const renderer: Renderer = {
     return "\\item " + text + EOL;
   },
   checkbox(checked) {
-    console.warn("Checkbox not supported in LaTeX. Please use a list instead.");
-    return "";
+    throw new Error("Checkboxes are not supported.");
   },
   paragraph(text) {
     return text + EOL + EOL;
   },
   table(header, body) {
-    // TODO: Check table implementation
-    let headerArr = [];
-    let bodyArr = [];
-    let hasHeader = false;
-    let firstRow = [];
-    let tex;
-    let tableSpec;
-
-    // remove the trailing comma from header row
-    if (header) {
-      header = header.substr(0, header.length - 1);
-      headerArr = JSON.parse(header);
-
-      if (headerArr.length !== 0) {
-        hasHeader = true;
-      }
-    }
-
-    // remove the trailing comma from body row(s)
-    if (body) {
-      body = body.substr(0, body.length - 1);
-      bodyArr = JSON.parse("[" + body + "]");
-    }
-
-    if (headerArr.length !== 0) {
-      firstRow = headerArr;
-    } else {
-      firstRow = bodyArr[0];
-    }
-
-    tex = "\\begin{tabular}";
-
-    // create table spec
-    tableSpec = "{|";
-
-    for (var i = 0; i < firstRow.length; i++) {
-      var alignFlag = firstRow[i].flags.align || "none";
-      var align = "l|";
-
-      switch (alignFlag) {
-        case "right":
-          align = "r|";
-          break;
-        case "center":
-          align = "c|";
-          break;
-      }
-
-      tableSpec += align;
-    }
-
-    tableSpec += "}";
-    tex += tableSpec + EOL;
-
-    // create table body
-    tex += "\\hline" + EOL;
-
-    if (hasHeader) {
-      tex += createTableRow(headerArr);
-      tex += "\\hline" + EOL;
-    }
-
-    for (var j = 0; j < bodyArr.length; j++) {
-      tex += createTableRow(bodyArr[j]);
-    }
-
-    tex += "\\hline" + EOL;
-
-    tex += "\\end{tabular}" + EOL;
-
-    return tex;
+    throw new Error("Tables are not supported.");
   },
   tablerow(content) {
-    // TODO: Check table implementation
-    // remove trailing comma from the list of cells
-    let row = content.substr(0, content.length - 1);
-
-    // and return it as a JSON array. add a comma to separate the
-    // row from the subsequent rows
-    return "[" + row + "],";
+    throw new Error("Table rows are not supported.");
   },
   tablecell(content, flags) {
-    // TODO: Check table implementation
-    // treat the cell as an element of a JSON array, and add a comma
-    // to separate it from the subsequent cells
-    return JSON.stringify({ content: content, flags: flags }) + ",";
+    throw new Error("Table cells are not supported.");
   },
   strong(text) {
     return "\\textbf{" + text + "}";
@@ -214,8 +120,7 @@ export const renderer: Renderer = {
     return "\\\\";
   },
   del(text) {
-    console.warn(`Strikethrough not supported in LaTeX. ["${text}"]`);
-    return text;
+    throw new Error(`Strikethrough is not supported. ["${text}"]`);
   },
   link(href, title, text) {
     // requires \usepackage{hyperref}
@@ -251,22 +156,6 @@ export const renderer: Renderer = {
 };
 
 // Renderer Helper
-function createTableRow(rowArr) {
-  var tex = "";
-
-  for (var c = 0; c < rowArr.length; c++) {
-    tex += rowArr[c].content;
-
-    if (c < rowArr.length - 1) {
-      tex += " & ";
-    } else {
-      tex += " \\\\" + EOL;
-    }
-  }
-
-  return tex;
-}
-
 function htmlUnescape(html) {
   return html.replace(/&([#\w]+);/g, function (_, n) {
     n = n.toLowerCase();
