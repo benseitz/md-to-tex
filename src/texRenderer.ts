@@ -232,6 +232,8 @@ export const extensions = [
         authors.push(directMatch[1].trim());
         if (directMatch[2]) {
           pages.push(directMatch[2].trim().replace(/\s/g, "~"));
+        } else {
+          pages.push("");
         }
 
         return {
@@ -254,6 +256,8 @@ export const extensions = [
           authors.push(author.startsWith("@") ? author.slice(1) : author);
           if (page) {
             pages.push(page.replace(/\s/g, "~"));
+          } else {
+            pages.push("");
           }
         });
 
@@ -271,12 +275,12 @@ export const extensions = [
         const citations = [];
         authors.forEach((author, index) => {
           citations.push(
-            `||citeauthor{${author} \\citeyear[${pages[index]}]{${author}}`
+            `\\citeauthor{${author}} \\citeyear[${pages[index]}]{${author}}`
           );
         });
         return `(${citations.join("; ")})`;
       } else {
-        return `\\citeauthor{${authors[0]} (\\citeyear[${pages[0]}]{${authors[0]}}`;
+        return `\\citeauthor{${authors[0]}} (\\citeyear[${pages[0]}]{${authors[0]}}`;
       }
     },
   },
