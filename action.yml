@@ -24,7 +24,7 @@ runs:
       run: npm run start --prefix ${{github.action_path}} -- -i ${{github.workspace}}/${{inputs.input-path}} -o ${{github.workspace}}/${{inputs.output-path}}
       shell: bash
     - name: Upload Latex file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{inputs.name}} LaTeX
         path: ${{inputs.output-path}}
@@ -35,7 +35,7 @@ runs:
         working_directory: ${{inputs.output-path}}
         continue_on_error: true
     - name: Upload PDF file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{inputs.name}} PDF
         path: ${{inputs.output-path}}/main.pdf
