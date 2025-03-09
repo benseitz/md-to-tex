@@ -220,9 +220,10 @@ export const extensions = [
       return src.match(/@|\[@/)?.index;
     },
     tokenizer(src, tokens) {
-      const directRule = /^@([a-zA-Z][a-zA-Z0-9]*)(?:\s\[(.*?)\])?/;
+      const directRule =
+        /^@([a-z](?:[a-z-]*[a-z])*[0-9]*[a-z]*)(?:\s\[(.*?)\])?/;
       const indirectRule =
-        /^\[@[a-zA-Z][a-zA-Z0-9]*(,\s(.*?))?(;\s@[a-zA-Z][a-zA-Z0-9]*(,\s(.*?))?)*\]/;
+        /^\[@[a-z](?:[a-z-]*[a-z])*[0-9]*[a-z]*(,\s(.*?))?(;\s@[a-z][a-z0-9]*(,\s(.*?))?)*\]/;
 
       const directMatch = directRule.exec(src);
       if (directMatch) {
@@ -232,6 +233,8 @@ export const extensions = [
         authors.push(directMatch[1].trim());
         if (directMatch[2]) {
           pages.push(directMatch[2].trim().replace(/\s/g, "~"));
+        } else {
+          pages.push("");
         }
 
         return {
@@ -254,6 +257,8 @@ export const extensions = [
           authors.push(author.startsWith("@") ? author.slice(1) : author);
           if (page) {
             pages.push(page.replace(/\s/g, "~"));
+          } else {
+            pages.push("");
           }
         });
 
@@ -271,12 +276,12 @@ export const extensions = [
         const citations = [];
         authors.forEach((author, index) => {
           citations.push(
-            `||citeauthor{${author} \\citeyear[${pages[index]}]{${author}}`
+            `\\citeauthor{${author}} \\citeyear[${pages[index]}]{${author}}`
           );
         });
         return `(${citations.join("; ")})`;
       } else {
-        return `\\citeauthor{${authors[0]} (\\citeyear[${pages[0]}]{${authors[0]}}`;
+        return `\\citeauthor{${authors[0]}} (\\citeyear[${pages[0]}]{${authors[0]}})`;
       }
     },
   },

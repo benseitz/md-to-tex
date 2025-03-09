@@ -28,6 +28,8 @@ runs:
       with:
         name: ${{inputs.name}} LaTeX
         path: ${{inputs.output-path}}
+        if-no-files-found: error
+        include-hidden-files: true
     - name: Compile TeX to PDF
       uses: xu-cheng/latex-action@v2
       with:
@@ -39,6 +41,8 @@ runs:
       with:
         name: ${{inputs.name}} PDF
         path: ${{inputs.output-path}}/main.pdf
+        if-no-files-found: error
+        include-hidden-files: true
 branding:
   icon: "edit"
   color: "gray-dark"
